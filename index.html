@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />hr
+  <title>Cookie Clicker セーブコード編集ツール</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+    textarea, input { width: 100%; margin-top: 10px; }
+    pre { background: #222; color: #0f0; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h2>🍪 セーブデータ編集ツール</h2>
+
+  <label>セーブコードを貼り付け：</label>
+  <textarea id="saveCode" rows="6"></textarea>
+  <button onclick="decodeAndEdit()">デコードして編集可能に</button>
+
+  <div id="editSection" style="display:none;">
+    <h3>編集：</h3>
+    <label>クッキー所持数：</label>
+    <input type="text" id="cookieCount" />
+    <button onclick="reencode()">再エンコードして新しいセーブコードを生成</button>
+  </div>
+
+  <h3>出力：</h3>
+  <pre id="output"></pre>
+
+  <script>
+    let decodedData = "";
+
+    function decodeAndEdit() {
+      const input = document.getElementById("saveCode").value.trim();
+      try {
+        decodedData = atob(input);
+        const match = decodedData.match(/Cookie Clicker Game[^;]*;([0-9\.]+)/);
+        const cookies = match ? match[1] : "";
+        document.getElementById("cookieCount").value = cookies;
+        document.getElementById("editSection").style.display = "block";
+        document.getElementById("output").textContent = "編集内容を入力してください。";
+      } catch (e) {
+        document.getElementById("output").textContent = "デコード失敗。セーブコードが正しいか確認してください。";
+      }
+    }
+
+    function reencode() {
+      const newCookies = document.getElementById("cookieCount").value;
+      let newData = decodedData.replace(/(Cookie Clicker Game[^;]*;)([0-9\.]+)/, `$1${newCookies}`);
+      const encoded = btoa(newData);
+      document.getElementById("output").textContent = encoded;
+    }
+  </script>
+</body>
+</html>
